@@ -1,5 +1,6 @@
 ﻿using CountriesManager.Core.DTO;
 using CountriesManager.Core.Identity;
+using CountriesManager.Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,12 +14,14 @@ namespace CountriesManager.WebApI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IJwtService _jwtService;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
@@ -49,8 +52,9 @@ namespace CountriesManager.WebApI.Controllers
             {
                 //sign-in
                 await _signInManager.SignInAsync(user, isPersistent: false);
-
-                return Ok(user);
+                // creating token and adding it in response 
+                var authenticationRsponse = _jwtService.CreateJwtToken(user); 
+                return Ok(authenticationRsponse);
             }
             else
             {
@@ -95,8 +99,8 @@ namespace CountriesManager.WebApI.Controllers
                 {
                     return NoContent();
                 }
-
-                return Ok(new { personName = user.PersonName, email = user.Email });
+                var authenticationRsponse = _jwtService.CreateJwtToken(user);
+                return Ok(authenticationRsponse);
             }
 
             else

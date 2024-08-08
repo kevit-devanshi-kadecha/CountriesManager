@@ -1,10 +1,15 @@
 using CountriesManager.Core.Identity;
+using CountriesManager.Core.ServiceContracts;
+using CountriesManager.Core.Services;
 using CountriesManager.Infrasture.DatabaseContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<CountryDBContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CountryDBContext") ?? throw new InvalidOperationException("Connection string 'CountryDBContext' not found.")));
 
 // Add services to the container.
 
@@ -13,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
+
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     options.Password.RequiredLength = 6;
@@ -25,7 +31,10 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     .AddDefaultTokenProviders()
     .AddUserStore<UserStore<ApplicationUser, ApplicationRole, AppDbContext, Guid>>()
     .AddRoleStore<RoleStore<ApplicationRole, AppDbContext, Guid>>();
-    ;
+
+//service for jwt token 
+builder.Services.AddTransient<IJwtService, JwtService>();
+
 
 var app = builder.Build();
 

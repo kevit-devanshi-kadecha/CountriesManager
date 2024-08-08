@@ -12,10 +12,6 @@ namespace CountriesManager.Infrasture.DatabaseContext
         {
         }
 
-        public AppDbContext()
-        {
-        }
-
         public virtual DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
