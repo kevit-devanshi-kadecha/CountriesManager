@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using CountriesManager.Infrasture.DatabaseContext;
 using Microsoft.AspNetCore.Cors;
 using CountriesManager.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 namespace CountriesManager.WebApI.Controllers
 {
+    //[Authorize]
     public class CountriesController : CustomControllerBase
     {
         private readonly AppDbContext _context;
