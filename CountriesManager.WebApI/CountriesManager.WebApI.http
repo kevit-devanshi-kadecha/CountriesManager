@@ -1,0 +1,6 @@
+@CountriesManager.WebApI_HostAddress = http://localhost:5281
+
+GET {{CountriesManager.WebApI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
